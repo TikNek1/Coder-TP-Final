@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Bienvenido a TikNek Viajes{% endblock %}
+
+{% block content %}
+
+<div class="text-center my-3">
+    <img src="{% static 'img/Logo_TikNek_Viajes.png' %}" alt="Viajes en moto" class="img-fluid rounded shadow" style="max-height: 300px;">
+</div>
+
+<div class="text-center">
+    <h2>¿Listo para la aventura?</h2>
+    <p class="lead">Explorá viajes en moto, conocé a los pilotos y descubrí nuevas aventuras.</p>
+    <a href="{% url 'listar_viajes' %}" class="btn btn-primary mt-3">Ver Viajes</a>
+</div>
+
+{% endblock %}

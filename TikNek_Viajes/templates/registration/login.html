@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Iniciar Sesión - TikNek{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-center mb-4">Iniciar Sesión</h2>
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Usuario o contraseña incorrectos.
+            </div>
+        {% endif %}
+        <form method="post" class="border p-4 rounded shadow-sm bg-light">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Usuario</label>
+                {{ form.username|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="id_password" class="form-label">Contraseña</label>
+                {{ form.password|add_class:"form-control" }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

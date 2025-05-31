@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Sesión Cerrada - TikNek{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h2>Sesión cerrada</h2>
+    <p>¡Hasta la próxima aventura!</p>
+    <a href="{% url 'login' %}" class="btn btn-outline-primary mt-3">Volver a iniciar sesión</a>
+</div>
+{% endblock %}
