@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2 class="mb-4">Guías de la comunidad</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for guia in guias %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            {% if guia.foto %}
+                <img src="{{ guia.foto.url }}" class="card-img-top object-fit-cover" style="height: 250px;" alt="Foto de {{ guia.nombre }}">
+            {% else %}
+                <img src="{% static 'img/default-avatar.png' %}" class="card-img-top object-fit-cover" style="height: 250px;" alt="Sin foto">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ guia.nombre }} {{ guia.apellido }}</h5>
+                <p class="card-text"><strong>Email:</strong> {{ guia.email }}</p>
+                <p class="card-text"><strong>Nacimiento:</strong> {{ guia.fecha_nac }}</p>
+                <p class="card-text"><strong>Ubicación:</strong> {{ guia.ciudad }}, {{ guia.pais }}</p>
+                <div class="card-text mt-2">
+                    {{ guia.sobre_mi|safe }}
+                </div>                
+                {% if guia.viajes.exists %}
+                    <h6 class="mt-3">Viajes asignados ({{ guia.viajes.count }})</h6>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        {% for viaje in guia.viajes.all %}
+                            <a href="{% url 'detalle_viaje' viaje.id %}" class="badge bg-secondary text-decoration-none p-2">
+                                {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mt-3">No tiene viajes asignados.</p>
+                {% endif %}
+            </div>
+            {% if puede_editar %}
+            <div class="card-footer d-flex justify-content-between">
+                <a href="{% url 'editar_guia' guia.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'eliminar_guia' guia.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-warning mt-3" role="alert">No hay guías registrados aún.</div>
+    {% endfor %}
+</div>
+
+{% if puede_editar %}
+    <div class="mt-4">
+        <a href="{% url 'crear_guia' %}" class="btn btn-success">Agregar nuevo guía</a>
+    </div>
+{% endif %}
+
+{% endblock %}

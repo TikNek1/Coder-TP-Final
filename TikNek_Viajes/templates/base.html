@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,27 +26,54 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="/viajes">Viajes</a></li>
                     <li class="nav-item"><a class="nav-link" href="/guias">Guías</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/pilotos">Pilotos</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="/pilotos">Pilotos</a></li>
+                    {% endif %}
                 </ul>
-    
+
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link text-white me-2" style="opacity: 1;">Hola, {{ user.username }}!</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Hola {{ user.first_name }}
+                                {% if user.piloto %}
+                                    <img src="{% static 'avatars/' %}{{ user.piloto.avatar }}" 
+                                        alt="Avatar" 
+                                        class="ms-2"
+                                        style="height: 32px; width: 32px; border-radius: 50%; object-fit: cover; background-color:white;">
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'perfil_piloto' %}">Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'editar_usuario' %}">Mi Usuario</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cambiar_password' %}">Cambiar Contraseña</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a> | 
-                            <a class="nav-link" href="{% url 'registro' %}">Registrarse</a>
+                            <a class="nav-link text-white" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'registro' %}">Registrarse</a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div class="container mt-4">
         <h1 class="text-center mb-4">{% block page_title %}TikNek - Viajes en Moto{% endblock %}</h1>
@@ -72,7 +100,12 @@
                 </div>
             </div>
             <div class="text-center pt-3 border-top border-secondary mt-3">
-                <small>&copy; 2025 TikNek Viajes - Todos los derechos reservados</small>
+                <a href="{% url 'about' %}" class="text-white-50 text-decoration-none d-inline-flex align-items-center"
+                    onmouseover="this.classList.remove('text-white-50'); this.classList.add('text-white')"
+                    onmouseout="this.classList.remove('text-white'); this.classList.add('text-white-50')">
+                    <i class="bi bi-info-circle me-1"></i> Acerca de
+                </a> | 
+                © 2025 TikNek Viajes - Todos los derechos reservados
             </div>
         </div>
     </footer>

@@ -5,9 +5,10 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 
 ## Roles
 
-- **Usuario visitante**: No autenticado. Puede ver viajes, guías y página About.
-- **Usuario registrado**: Puede ver y editar su perfil, con foto/avatar, y marcar interés en viajes.
-- **Administrador**: Gestiona viajes, guías y pilotos desde el panel de administración de Django. También puede asignar usuarios a grupos y cambiar contraseñas.
+- **Usuario visitante**: No autenticado. Puede ver viajes, guías y página About, puede registrarse.
+- **Usuario registrado**: Puede ver viajes, guías, pilotos y editar su usuario/perfil, marcar interés en viajes.
+- **Usuario Editor / grupo TikNek**: Gestiona viajes, guías y pilotos.
+- **Administrador**: Gestiona viajes, guías y pilotos. Desde el panel de administración de Django, gestiona usuarios/grupos.
 
 ---
 
@@ -21,13 +22,12 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
   - Pilotos inscriptos
 - (Opcional para admins) **Soft delete** de viajes en lugar de borrado real.
 
-### 2. Preinscripción
+### 2. Preinscripción o Me gusta (under construction!)
 - Botón en cada viaje que abra el mail del usuario con subject prellenado:  
   `Asunto: Me interesa más información sobre el viaje X`
 
 ### 3. Guías
-- Listado de guías
-- Detalle de cada guía con su “CV” o experiencia
+- Listado / detalle de cada guía con su “CV” o experiencia
 
 ### 4. Usuarios
 - Login, logout, registro
@@ -62,6 +62,7 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 - Django Widget Tweaks
 - CKEditor v5 para texto enriquecido. Atención: requiere algunas configs extra que la v4 que tiene VULNs
 - Pillow (para poder usar ImageField)
+- Faker (para popular la BD con datos ficticios)
 
 ---
 

@@ -1,36 +1,69 @@
+import os
 from django import forms
-from .models import Viaje, Piloto
+from .models import Viaje, Piloto, Guia
 from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.conf import settings
 
-class RegistroUsuarioForm(UserCreationForm):
-    first_name = forms.CharField(label='Nombre')
-    last_name = forms.CharField(label='Apellido')
-    email = forms.EmailField()
+
+class RegistroForm(UserCreationForm):
+    first_name = forms.CharField(label='Nombre', max_length=30)
+    last_name = forms.CharField(label='Apellido', max_length=30)
+    email = forms.EmailField(label='Email')
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
-class RegistroCompletoForm(UserCreationForm):
-    # Campos adicionales del modelo Piloto
-    dni = forms.CharField(max_length=20)
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-
+class EditarUsuarioForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'dni', 'fecha_nacimiento']
+        fields = ['first_name', 'last_name', 'email']
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+        }
 
-    def save(self, commit=True):
-        user = super().save(commit=commit)
-        if commit:
-            Piloto.objects.create(
-                user=user,
-                dni=self.cleaned_data['dni'],
-                fecha_nacimiento=self.cleaned_data['fecha_nacimiento']
-            )
-        return user
+    def clean_first_name(self):
+        return self.cleaned_data['first_name'].capitalize()
+    
+    def clean_last_name(self):
+        return self.cleaned_data['last_name'].capitalize()
+
+class GuiaForm(forms.ModelForm):
+    fecha_nac = forms.DateField(label='Fecha de nacimiento', required=False, widget=forms.DateInput(attrs={'type': 'date'},format='%Y-%m-%d'))
+
+    class Meta:
+        model = Guia
+        fields = ['nombre', 'apellido', 'email', 'dni', 'telefono', 'fecha_nac', 'ciudad', 'pais', 'sobre_mi', 'foto']
+        widgets = {
+            'sobre_mi': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(GuiaForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+class PilotoForm(forms.ModelForm):
+    fecha_nac = forms.DateField(label='Fecha de nacimiento', required=False, widget=forms.DateInput(attrs={'type': 'date'},format='%Y-%m-%d'))
+    avatar = forms.ChoiceField(choices=[], widget=forms.RadioSelect)
+
+    class Meta:
+        model = Piloto
+        fields = ['telefono', 'fecha_nac', 'ciudad', 'pais', 'sobre_mi', 'moto', 'avatar']
+        widgets = {
+            'sobre_mi': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        avatars_dir = os.path.join(settings.BASE_DIR, 'static/avatars')
+        avatars = sorted(os.listdir(avatars_dir))
+        self.fields['avatar'].choices = [(a, a) for a in avatars]
+
 
 class ViajeForm(forms.ModelForm):
     class Meta:

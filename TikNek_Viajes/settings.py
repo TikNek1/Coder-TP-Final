@@ -151,5 +151,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Authentication settings
 #LOGIN_REDIRECT_URL = '/viajes/'
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'bienvenida'
 LOGOUT_REDIRECT_URL = '/login/'

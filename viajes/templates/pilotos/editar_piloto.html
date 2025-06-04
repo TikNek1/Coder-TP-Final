@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% load form_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Editar perfil de {{ piloto.user.get_full_name }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">{{ form.telefono.label }}</label>
+                    {{ form.telefono|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.fecha_nac.label }}</label>
+                    {{ form.fecha_nac|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.ciudad.label }}</label>
+                    {{ form.ciudad|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.pais.label }}</label>
+                    {{ form.pais|add_class:"form-control" }}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">{{ form.moto.label }}</label>
+                    {{ form.moto|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.sobre_mi.label }}</label>
+                    {{ form.sobre_mi|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Elegí tu avatar</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% for value, label in form.avatar.field.choices %}
+                            <label class="text-center">
+                                <input
+                                    type="radio"
+                                    name="avatar"
+                                    value="{{ value }}"
+                                    {% if form.avatar.value == value %}checked{% endif %}
+                                    class="d-none"
+                                >
+                                <img
+                                    src="{% static 'avatars/' %}{{ value }}"
+                                    alt="{{ label }}"
+                                    width="80"
+                                    height="80"
+                                    class="rounded-circle border border-3 avatar-option {% if form.avatar.value == value %}border-primary{% else %}border-secondary{% endif %}"
+                                    onclick="selectAvatar(this)"
+                                >
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-3">
+            <button type="submit" class="btn btn-primary">Guardar perfil</button>
+            <a href="{% url 'detalle_piloto' object.pk %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.avatar-option {
+    cursor: pointer;
+    transition: border 0.3s ease, transform 0.2s;
+}
+.avatar-option:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+function selectAvatar(img) {
+    const allAvatars = document.querySelectorAll('.avatar-option');
+    allAvatars.forEach(el => el.classList.remove('border-primary'));
+    img.classList.add('border-primary');
+    img.previousElementSibling.checked = true;
+}
+</script>
+{% endblock %}

@@ -2,17 +2,15 @@
 {% load custom_tags %}
 
 {% block content %}
-<h1 class="text-center mb-4">Lista de Viajes</h1>
+<h2 class="mb-4">Lista de Viajes</h2>
 
 <!-- Filtros -->
 <form method="get" class="row g-2 align-items-end mb-4">
     <div class="col-auto">
-        <label for="nombre" class="form-label mb-0">Destino</label>
         <input type="text" name="nombre" id="nombre" class="form-control form-control-sm"
             placeholder="Buscar nombre" value="{{ request.GET.nombre }}">
     </div>
     <div class="col-auto">
-        <label for="mes" class="form-label mb-0">Mes</label>
         <input type="month" name="mes" id="mes" class="form-control form-control-sm"
             value="{{ request.GET.mes }}">
     </div>
@@ -21,12 +19,19 @@
             <i class="bi bi-search"></i> Buscar
         </button>
     </div>
-    <div class="col-auto ms-auto">
-        {% if user.is_authenticated %}
-            {% if user|has_group:"TikNek" or user.is_superuser %}
-                <a href="{% url 'crear_viaje' %}" class="btn btn-primary btn-sm">Crear Nuevo Viaje</a>
+
+    <!-- Lado derecho: texto y botón (si hay) -->
+    <div class="col ms-auto">
+        <div class="d-flex justify-content-end align-items-center gap-2">
+            <p class="text-muted mb-0">
+                Mostrando {{ viajes|length }} viaje{% if viajes|length != 1 %}s{% endif %}
+            </p>
+            {% if user.is_authenticated %}
+                {% if user|has_group:"TikNek" or user.is_superuser %}
+                    <a href="{% url 'crear_viaje' %}" class="btn btn-primary btn-sm">Crear Nuevo Viaje</a>
+                {% endif %}
             {% endif %}
-        {% endif %}
+        </div>
     </div>
 </form>
 
@@ -43,7 +48,7 @@
     {% endfor %}
 
     {% if not viajes %}
-        <div class="alert alert-info mt-3">No se encontraron viajes.</div>
+        <div class="alert alert-warning mt-3" role="alert">No se encontraron viajes.</div>
     {% endif %}
 </div>
 {% endblock %}

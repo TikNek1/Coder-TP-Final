@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Pilotos registrados</h2>
+
+    <!-- Filtros -->
+    <div class="row align-items-end mb-4">
+        <div class="col">
+            <form method="get" class="row g-2">
+                <div class="col-auto">
+                    <input type="text" name="q" class="form-control form-control-sm" placeholder="Nombre, apellido o ciudad" value="{{ request.GET.q }}">
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="pais" class="form-control form-control-sm" placeholder="País" value="{{ request.GET.pais }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col text-end">
+            <p class="text-muted mb-0">
+                Mostrando {{ pilotos|length }} piloto{% if pilotos|length != 1 %}s{% endif %}
+            </p>
+        </div>
+    </div>
+
+    {% if pilotos|length == 0 %}
+        <div class="alert alert-warning mt-3" role="alert">
+            No se encontraron pilotos
+        </div>
+    {% endif %}
+
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Ciudad / País</th>
+                <th>Viajes</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for piloto in pilotos %}
+            <tr>
+                <td><strong>{{ piloto.user.first_name }}</strong></td>
+                <td><strong>{{ piloto.user.last_name }}</strong></td>
+                <td>
+                    <span class="text-muted">{{ piloto.ciudad }}, {{ piloto.pais }}</span>
+                </td>
+                <td>
+                    {% if piloto.viajes.exists %}
+                        {% for viaje in piloto.viajes.all %}
+                            <a href="{% url 'detalle_viaje' viaje.id %}" class="btn btn-outline-secondary btn-sm me-1 mb-1">
+                                {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted">Sin viajes</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'detalle_piloto' piloto.pk %}" class="btn btn-outline-primary btn-sm me-1">
+                        Ver detalle
+                    </a>                    
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

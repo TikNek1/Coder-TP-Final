@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Perfil de {{ piloto.user.get_full_name }}</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Email:</strong> {{ piloto.user.email }}</li>
+                <li class="list-group-item"><strong>Fecha de nacimiento:</strong> {{ piloto.fecha_nac|date:"d/m/Y" }}</li>
+                <li class="list-group-item"><strong>Ciudad:</strong> {{ piloto.ciudad }}</li>
+                <li class="list-group-item"><strong>País:</strong> {{ piloto.pais }}</li>
+                <li class="list-group-item"><strong>Sobre mí:</strong><br>{{ piloto.sobre_mi|linebreaks }}</li>
+                <li class="list-group-item"><strong>Moto:</strong> {{ piloto.moto }}</li>
+            </ul>
+
+            <hr>
+
+            <h5>Viajes realizados o en los que está inscripto ({{ piloto.viajes.count }})</h5>
+            {% if piloto.viajes.exists %}
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    {% for viaje in piloto.viajes.all %}
+                        <a href="{% url 'detalle_viaje' viaje.id %}" class="badge bg-primary text-decoration-none p-2">
+                            {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mt-2">No participa en ningún viaje.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if puede_editar %}
+        <a href="{% url 'editar_piloto' piloto.id %}" class="btn btn-warning mt-3">Editar</a>
+        <a href="{% url 'eliminar_piloto' piloto.pk %}" class="btn btn-danger mt-3">Eliminar</a>
+    {% endif %}
+    <a href="{% url 'lista_pilotos' %}" class="btn btn-primary mt-3">Volver</a>
+</div>
+{% endblock %}

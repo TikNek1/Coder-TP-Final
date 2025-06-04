@@ -1,34 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card mt-4">
-    <div class="card-body">
-        <h2 class="card-title">Detalles del Viaje</h2>
-        <p><strong>Nombre:</strong> {{ viaje.nombre }}</p>
-        <p><strong>Descripción:</strong> {{ viaje.detalle|safe }}</p>
-        <p><strong>Fecha de salida:</strong> {{ viaje.fecha_salida }}</p>
-        <p><strong>Cantidad de días:</strong> {{ viaje.cant_dias }}</p>
-        <p><strong>Kilómetros:</strong> {{ viaje.km }}</p>
-        <p><strong>Dificultad:</strong> {{ viaje.get_dificultad_display }}</p>
-        <p><strong>Guía:</strong> {{ viaje.guia }}</p>
-        <p><strong>Activo:</strong> {{ viaje.activo|yesno:"Sí,No" }}</p>
-        <p><strong>Máximo de pilotos:</strong> {{ viaje.max_pilotos }}</p>
+<div class="container mt-4">
+    <h2 class="mb-4">Detalles del Viaje</h2>
 
-        <h5 class="mt-3">Pilotos:</h5>
-        <ul class="list-group">
-            {% for piloto in viaje.pilotos.all %}
-                <li class="list-group-item">{{ piloto.nombre }} {{ piloto.apellido }}</li>
-            {% empty %}
-                <li class="list-group-item text-muted">No hay pilotos inscriptos</li>
-            {% endfor %}
-        </ul>
+    <div class="row">
+        <!-- Columna izquierda: detalles del viaje -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">{{ viaje.nombre }}</h4>
+                    <p><strong>Descripción:</strong> {{ viaje.detalle|safe }}</p>
+                    <p><strong>Fecha de salida:</strong> {{ viaje.fecha_salida }}</p>
+                    <p><strong>Cantidad de días:</strong> {{ viaje.cant_dias }}</p>
+                    <p><strong>Kilómetros:</strong> {{ viaje.km }}</p>
+                    <p><strong>Dificultad:</strong> {{ viaje.get_dificultad_display }}</p>
+                    <p><strong>Máximo de pilotos:</strong> {{ viaje.max_pilotos }}</p>
+                    <p><strong>Activo:</strong> {{ viaje.activo|yesno:"Sí,No" }}</p>
 
-        {% if puede_editar %}
-            <a href="{% url 'editar_viaje' viaje.id %}" class="btn btn-warning mt-3">Editar</a>
-            <a href="{% url 'eliminar_viaje' viaje.pk %}" class="btn btn-danger mt-3">Eliminar</a>
-        {% endif %}
+                    <p><strong>Guía:</strong>
+                        {% if viaje.guia %}
+                            <a href="{% url 'lista_guias' %}" class="badge bg-secondary text-decoration-none p-2">
+                                {{ viaje.guia.nombre }} {{ viaje.guia.apellido }}
+                            </a>
+                        {% else %}
+                            <span>No hay Guía asignado</span>
+                        {% endif %}
+                    </p>
 
-        <a href="{% url 'listar_viajes' %}" class="btn btn-primary mt-3">Volver a la lista</a>
+                    {% if puede_editar %}
+                        <a href="{% url 'editar_viaje' viaje.id %}" class="btn btn-warning mt-3">Editar</a>
+                        <a href="{% url 'eliminar_viaje' viaje.pk %}" class="btn btn-danger mt-3 ms-2">Eliminar</a>
+                    {% endif %}
+                    <a href="{% url 'listar_viajes' %}" class="btn btn-primary mt-3 ms-2">Volver</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: pilotos -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Pilotos inscriptos ({{ viaje.pilotos.count }})</h5>
+
+                    {% if viaje.pilotos.exists %}
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for piloto in viaje.pilotos.all %}
+                                <span class="badge bg-secondary text-decoration-none p-2">
+                                    {{ piloto }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No hay pilotos inscriptos</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
