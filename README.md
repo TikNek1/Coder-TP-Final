@@ -40,6 +40,10 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 ### 5. Página About
 - Página estática con info general sobre la empresa
 
+### 6. Messages APP / Chat
+- Permite el chat 1:1 entre los usuarios autenticados en la plataforma
+- Cada usuario puede seleccionar a quién enviarle un mensaje, como así también ver respuestas e histórico
+
 ---
 
 ## Consideraciones técnicas

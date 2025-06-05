@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django_ckeditor_5", # para manejar contenido enriquecido, no pude usar el 4, tiene VULNs
     'viajes',            # aplicación principal del proyecto
     'widget_tweaks',     # para mejorar los formularios
+    'messages_app',      # aplicación de mensajes
 ]
 
 MIDDLEWARE = [

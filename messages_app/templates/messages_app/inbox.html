@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Mensajes</h3>
+
+    <div class="row mt-4">
+        <!-- Columna izquierda: Iniciar nuevo chat -->
+        <div class="col-md-5">
+            <form method="get" action="{% url 'chat_with_user_redirect' %}" class="mb-4">
+                <label for="user-select" class="form-label">Iniciar nuevo chat:</label>
+                <div class="d-flex">
+                    <select name="username" id="user-select" class="form-select me-2" required>
+                        <option value="" disabled selected>Seleccioná un usuario</option>
+                        {% for user in users %}
+                            <option value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Ir</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Columna derecha: Lista de chats activos -->
+        <div class="col-md-7">
+            <h5>Chats activos</h5>
+            {% if active_chats %}
+                <ul class="list-group">
+                    {% for user in active_chats %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'conversation' username=user.username %}">
+                                {{ user.first_name }} {{ user.last_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Aún no tenés conversaciones.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

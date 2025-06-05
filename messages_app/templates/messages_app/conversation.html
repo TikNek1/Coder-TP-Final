@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Chat con {{ other_user.first_name }}</h3>
+
+    <div class="row">
+        <!-- Columna izquierda: Formulario -->
+        <div class="col-md-4">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.body|add_class:"form-control" }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Enviar</button>
+            </form>
+        </div>
+
+        <!-- Columna derecha: Historial -->
+        <div class="col-md-8">
+            <div class="border p-3" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+                {% for msg in chat_messages %}
+                    <div class="d-flex {% if msg.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %} mb-2">
+                        {% if msg.sender == request.user %}
+                            <div class="p-2 rounded" style="max-width: 70%; background-color: #d1e7dd; border: 1px solid #ccc;">
+                        {% else %}
+                            <div class="p-2 rounded" style="max-width: 70%; background-color: #ffffff; border: 1px solid #ccc;">
+                        {% endif %}
+                                <small class="text-muted">
+                                    {% if msg.sender == request.user %}Vos{% else %}{{ msg.sender.first_name }}{% endif %} - {{ msg.timestamp|date:"H:i" }}
+                                </small><br>
+                                {{ msg.body }}
+                            </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Todavía no hay mensajes.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
