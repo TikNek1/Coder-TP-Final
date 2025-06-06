@@ -7,8 +7,13 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 
 - **Usuario visitante**: No autenticado. Puede ver viajes, guías y página About, puede registrarse.
 - **Usuario registrado**: Puede ver viajes, guías, pilotos y editar su usuario/perfil, marcar interés en viajes.
-- **Usuario Editor / grupo TikNek**: Gestiona viajes, guías y pilotos.
+- **Usuario Editor / grupo TikNek**: Gestiona viajes, guías y pilotos. Responde consultas vía chat
 - **Administrador**: Gestiona viajes, guías y pilotos. Desde el panel de administración de Django, gestiona usuarios/grupos.
+
+## Usuario/pw para pruebas
+
+- **admin / coder123**: usuario con perfil administrador
+- **info.viajes / coder123**: usuario con perfil editor. Importante tener este usuario, ya que es quien recibe los chats de los interesados a los viajes. Debe existir!
 
 ---
 
@@ -20,29 +25,41 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
   - Fecha, destino, descripción
   - Guía asignado
   - Pilotos inscriptos
-- (Opcional para admins) **Soft delete** de viajes en lugar de borrado real.
+- (Opcional para admins) **Soft delete** de viajes en lugar de borrado real, quedan archivados o en borrador.
 
-### 2. Preinscripción o Me gusta (under construction!)
-- Botón en cada viaje que abra el mail del usuario con subject prellenado:  
-  `Asunto: Me interesa más información sobre el viaje X`
+### 2. Interés / Consultas sobre un viaje
+- Botón en cada viaje que abre un chat prellenado con el usuario info_viajes:  
+  Asunto: 'Estoy interesado en el viaje X`
 
-### 3. Guías
-- Listado / detalle de cada guía con su “CV” o experiencia
-
-### 4. Usuarios
+### 3. Usuarios
 - Login, logout, registro
-- Edición de perfil personal:
-  - Nombre, email, agregar/cambiar foto/avatar
-- Los administradores pueden:
-  - Cambiar contraseñas desde el panel de administración
+- Edición de "Mi Usuario":
+  - Nombre/Apellido, email
+- Edición de "Mi perfil":
+  - Telefono, fecha nacimiento, ciudad, país, moto, datos personales, cambiar avatar
+- Los administradores pueden desde /admin:
   - Asignar grupos a los usuarios
+  - ABM de usuarios
 
-### 5. Página About
+### 4. Pilotos
+- Lista de pilotos
+- Detalle de pilotos
+- Chat con un piloto
+- (Admin / Editor) Edición/Eliminación de perfil de piloto
+
+
+### 5. Guías
+- Listado / detalle de cada guía con su “CV” o experiencia
+- (Admin / Editor) Edición/Eliminación de perfil de piloto
+
+
+### 6. Página About
 - Página estática con info general sobre la empresa
 
-### 6. Messages APP / Chat
+### 7. Messages APP / Chat
 - Permite el chat 1:1 entre los usuarios autenticados en la plataforma
 - Cada usuario puede seleccionar a quién enviarle un mensaje, como así también ver respuestas e histórico
+- La app se usa también para que el usuario info.viajes responda preguntas de interesados a un viaje
 
 ---
 
@@ -51,8 +68,8 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 - Base de datos: SQLite
 - Panel de administración: se usará el admin de Django para gestión de usuarios, grupos, viajes y asignaciones.
 - Frameworks: Django + Bootstrap
-- CRUD básico en frontend solo donde tenga sentido para el demo (por ejemplo, perfil personal)
-- Imágenes de avatar y carga de CV: guardar localmente en `/media/` (no es necesario S3 ni servicios externos)
+- CRUD básico en frontend solo donde tenga sentido para el demo (por ejemplo, piloto, guia, viajes)
+- Imágenes de avatar: guardar localmente en `/static/`
 - Mensajes de confirmación (exito/error) en las acciones principales con `messages` de Django
 
 
@@ -64,15 +81,7 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 - Bootstrap (vía CDN)
 - HTML / CSS
 - Django Widget Tweaks
-- CKEditor v5 para texto enriquecido. Atención: requiere algunas configs extra que la v4 que tiene VULNs
 - Pillow (para poder usar ImageField)
 - Faker (para popular la BD con datos ficticios)
 
 ---
-
-## Ideas para agregar si hay tiempo
-
-- Validaciones custom en formularios
-- Soft delete de viajes
-- Fecha de creación/modificación de objetos
-- Historial de cambios (nivel muy opcional, si sobra tiempo)

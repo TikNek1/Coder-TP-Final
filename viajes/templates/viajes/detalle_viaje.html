@@ -10,7 +10,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h4 class="card-title">{{ viaje.nombre }}</h4>
-                    <p><strong>Descripción:</strong> {{ viaje.detalle|safe }}</p>
+                    <p><strong>Descripción:</strong> {{ viaje.detalle|linebreaks }}</p>
                     <p><strong>Fecha de salida:</strong> {{ viaje.fecha_salida }}</p>
                     <p><strong>Cantidad de días:</strong> {{ viaje.cant_dias }}</p>
                     <p><strong>Kilómetros:</strong> {{ viaje.km }}</p>
@@ -27,13 +27,21 @@
                             <span>No hay Guía asignado</span>
                         {% endif %}
                     </p>
-
-                    {% if puede_editar %}
-                        <a href="{% url 'editar_viaje' viaje.id %}" class="btn btn-warning mt-3">Editar</a>
-                        <a href="{% url 'eliminar_viaje' viaje.pk %}" class="btn btn-danger mt-3 ms-2">Eliminar</a>
-                    {% endif %}
-                    <a href="{% url 'listar_viajes' %}" class="btn btn-primary mt-3 ms-2">Volver</a>
                 </div>
+            </div>
+
+            <!-- Botones alineados a la derecha -->
+            <div class="d-flex gap-2 mt-3">
+                {% if puede_editar %}
+                    <a href="{% url 'editar_viaje' viaje.id %}" class="btn btn-warning">Editar</a>
+                    <a href="{% url 'eliminar_viaje' viaje.pk %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
+                <a href="{% url 'listar_viajes' %}" class="btn btn-primary">Volver</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'conversation' 'info.viajes' %}?mensaje={{ "Estoy interesado en el viaje " | add:viaje.nombre | urlencode }}" class="btn btn-outline-success">
+                        <i class="bi bi-chat-dots"></i> Consultar
+                    </a>
+                {% endif %}
             </div>
         </div>
 

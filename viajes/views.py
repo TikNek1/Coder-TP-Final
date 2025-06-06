@@ -233,10 +233,6 @@ class GuiaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 # En esta sección están las vistas para listar PILOTOS y ver los detalles de un piloto, además del CRUD.
 # -------------------------------------------------------------------------------------------------------------------
 
-# Vista para listar pilotos
-# def lista_pilotos(request):
-#     pilotos = Piloto.objects.all()
-#     return render(request, 'viajes/lista_pilotos.html', {'pilotos': pilotos})
 
 class ListaPilotosView(LoginRequiredMixin, ListView):
     model = Piloto
@@ -256,8 +252,14 @@ class ListaPilotosView(LoginRequiredMixin, ListView):
             )
         if pais:
             queryset = queryset.filter(pais__icontains=pais)
+        
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # esto es para poder filtrar por país en la lista de pilotos con una lista desplegable
+        context['paises'] = Piloto.objects.exclude(pais='').exclude(pais__isnull=True).values_list('pais', flat=True).distinct().order_by('pais')
+        return context
 
 class DetallePilotoView(LoginRequiredMixin, DetailView):
     model = Piloto
@@ -285,6 +287,7 @@ class PilotoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class PilotoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Piloto
     template_name = 'pilotos/eliminar_piloto.html'
+    context_object_name = 'piloto'
 
     def get_success_url(self):
         messages.success(self.request, "Piloto eliminado")

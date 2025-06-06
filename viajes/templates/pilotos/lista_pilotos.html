@@ -12,12 +12,24 @@
                     <input type="text" name="q" class="form-control form-control-sm" placeholder="Nombre, apellido o ciudad" value="{{ request.GET.q }}">
                 </div>
                 <div class="col-auto">
-                    <input type="text" name="pais" class="form-control form-control-sm" placeholder="País" value="{{ request.GET.pais }}">
+                    <select name="pais" class="form-select form-select-sm">
+                        <option value="">Todos los países</option>
+                        {% for p in paises %}
+                            <option value="{{ p }}" {% if request.GET.pais == p %}selected{% endif %}>
+                                {{ p }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-search"></i> Buscar
                     </button>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'lista_pilotos' %}" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-x-circle"></i> Reset
+                    </a>
                 </div>
             </form>
         </div>
@@ -29,49 +41,46 @@
         </div>
     </div>
 
-    {% if pilotos|length == 0 %}
-        <div class="alert alert-warning mt-3" role="alert">
-            No se encontraron pilotos
-        </div>
-    {% endif %}
 
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Ciudad / País</th>
-                <th>Viajes</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
             {% for piloto in pilotos %}
-            <tr>
-                <td><strong>{{ piloto.user.first_name }}</strong></td>
-                <td><strong>{{ piloto.user.last_name }}</strong></td>
-                <td>
-                    <span class="text-muted">{{ piloto.ciudad }}, {{ piloto.pais }}</span>
-                </td>
-                <td>
-                    {% if piloto.viajes.exists %}
-                        {% for viaje in piloto.viajes.all %}
-                            <a href="{% url 'detalle_viaje' viaje.id %}" class="btn btn-outline-secondary btn-sm me-1 mb-1">
-                                {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <span class="text-muted">Sin viajes</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{% url 'detalle_piloto' piloto.pk %}" class="btn btn-outline-primary btn-sm me-1">
-                        Ver detalle
-                    </a>                    
-                </td>
-            </tr>
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h5 class="mb-1">{{ piloto.user.first_name }} {{ piloto.user.last_name }}</h5>
+                                <p class="mb-0 text-muted small">📍 {{ piloto.ciudad }}, {{ piloto.pais }}</p>
+                            </div>
+                            
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'detalle_piloto' piloto.pk %}" class="btn btn-outline-primary btn-sm">
+                                        Ver detalle
+                                    </a>
+                                    <a href="{% url 'conversation' piloto.user.username %}" class="btn btn-outline-success btn-sm" title="Enviar mensaje">
+                                        <i class="bi bi-chat-dots"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </div>
+                        <div>
+                            {% if piloto.viajes.exists %}
+                                {% for viaje in piloto.viajes.all %}
+                                    <a href="{% url 'detalle_viaje' viaje.id %}" class="badge bg-secondary text-decoration-none me-1 mb-1">
+                                        {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted small">Sin viajes asignados</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-warning mt-3" role="alert">
+                    No se encontraron pilotos
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+
 </div>
 {% endblock %}

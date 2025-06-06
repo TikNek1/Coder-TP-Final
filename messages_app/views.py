@@ -45,7 +45,12 @@ def conversation(request, username):
             msg.save()
             return redirect('conversation', username=other_user.username)
     else:
-        form = MessageForm()
+        # Si viene con un query param ?mensaje=..., se usa como valor inicial del form (para las preguntas por viajes!)
+        mensaje_inicial = request.GET.get('mensaje')
+        if mensaje_inicial:
+            form = MessageForm(initial={'body': mensaje_inicial})
+        else:
+            form = MessageForm()
 
     return render(request, 'messages_app/conversation.html', {
         'chat_messages': messages,

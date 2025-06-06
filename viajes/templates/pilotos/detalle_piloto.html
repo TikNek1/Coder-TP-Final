@@ -19,9 +19,9 @@
 
             <h5>Viajes realizados o en los que está inscripto ({{ piloto.viajes.count }})</h5>
             {% if piloto.viajes.exists %}
-                <div class="d-flex flex-wrap gap-2 mt-2">
+                <div class="d-flex flex-wrap gap-2 mt-3">
                     {% for viaje in piloto.viajes.all %}
-                        <a href="{% url 'detalle_viaje' viaje.id %}" class="badge bg-primary text-decoration-none p-2">
+                        <a href="{% url 'detalle_viaje' viaje.id %}" class="btn btn-outline-secondary btn-sm">
                             {{ viaje.nombre }} - {{ viaje.fecha_salida|date:"m/Y" }}
                         </a>
                     {% endfor %}
@@ -31,10 +31,16 @@
             {% endif %}
         </div>
     </div>
-    {% if puede_editar %}
-        <a href="{% url 'editar_piloto' piloto.id %}" class="btn btn-warning mt-3">Editar</a>
-        <a href="{% url 'eliminar_piloto' piloto.pk %}" class="btn btn-danger mt-3">Eliminar</a>
-    {% endif %}
-    <a href="{% url 'lista_pilotos' %}" class="btn btn-primary mt-3">Volver</a>
+
+    <div class="mt-4 d-flex gap-2 flex-wrap">
+        {% if puede_editar %}
+            <a href="{% url 'editar_piloto' piloto.id %}" class="btn btn-warning">Editar</a>
+            <a href="{% url 'eliminar_piloto' piloto.pk %}" class="btn btn-danger">Eliminar</a>
+        {% endif %}
+        <a href="{% url 'lista_pilotos' %}" class="btn btn-primary">Volver</a>
+        <a href="{% url 'conversation' piloto.user.username %}" class="btn btn-outline-success">
+            <i class="bi bi-chat-dots"></i> Enviar mensaje
+        </a>
+    </div>
 </div>
 {% endblock %}

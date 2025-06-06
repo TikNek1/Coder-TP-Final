@@ -17,7 +17,7 @@ class Guia(models.Model):
         ('OT', 'Otro')
     ])
     # despues ver si agrego mas paises o relaciono con tabla de paises
-    sobre_mi = CKEditor5Field("Sobre mí", config_name="default")
+    sobre_mi = models.TextField(blank=True)
     foto = models.ImageField(upload_to='guias_fotos/', null=True, blank=True)
     # OJO: Para ImageField tener configurado MEDIA_ROOT y MEDIA_URL en settings.py, 
     # y agregar urlpatterns en urls.py para servir archivos en desarrollo.
@@ -37,7 +37,7 @@ class Piloto(models.Model):
         ('OT', 'Otro')
     ])
     # despues ver si agrego mas paises o relaciono con tabla de paises
-    sobre_mi = CKEditor5Field("Sobre mí", config_name="default", blank=True)
+    sobre_mi = models.TextField(blank=True)
     moto = models.CharField(max_length=100, default="Sin, por ahora", blank=True)
     avatar = models.CharField(max_length=100, default='default.png')
 
@@ -53,7 +53,7 @@ class Viaje(models.Model):
     ]
 
     nombre = models.CharField(max_length=100)
-    detalle = CKEditor5Field("detalle", config_name="default")
+    detalle = models.TextField(max_length=100)
     fecha_salida = models.DateField()
     cant_dias = models.PositiveIntegerField()
     km = models.PositiveIntegerField()

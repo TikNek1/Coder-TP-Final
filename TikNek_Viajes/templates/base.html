@@ -69,6 +69,7 @@
         </div>
     </nav>
 
+    <!-- Este es el código que mostrará los mensajes de info/alerta/error que se envían desde las vistas de Django. -->
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -102,26 +103,31 @@
                     </ul>
                 </div>
             </div>
-            <div class="text-center pt-3 border-top border-secondary mt-3">
-                <a href="{% url 'about' %}" class="text-white-50 text-decoration-none d-inline-flex align-items-center"
-                    onmouseover="this.classList.remove('text-white-50'); this.classList.add('text-white')"
-                    onmouseout="this.classList.remove('text-white'); this.classList.add('text-white-50')">
-                    <i class="bi bi-info-circle me-1"></i> Acerca de
-                </a> | 
-                © 2025 TikNek Viajes - Todos los derechos reservados
+            <div class="text-center pt-3 border-top border-secondary mt-3 small">
+                <div class="text-white-50">
+                    <a href="{% url 'about' %}" class="text-white-50 text-decoration-none d-inline-flex align-items-center me-2"
+                        onmouseover="this.classList.remove('text-white-50'); this.classList.add('text-white')"
+                        onmouseout="this.classList.remove('text-white'); this.classList.add('text-white-50')">
+                        <i class="bi bi-info-circle me-1"></i> Acerca de
+                    </a> |
+                    © 2025 TikNek Viajes - Todos los derechos reservados
+                </div>
+                <div class="text-secondary mt-1">
+                    Nicolás Tecco - Coderhouse - Comisión 69550
+                </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Espera 5 segundos (5000 milisegundos) y luego cierra las alertas
+        // Script que espera X segundos (x000 milisegundos) y luego cierra las alertas
         setTimeout(function() {
             const alertList = document.querySelectorAll('.alert');
             alertList.forEach(function(alert) {
                 const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
                 bsAlert.close();
             });
-        }, 2000); // Cambiá este valor si querés más o menos tiempo
+        }, 4000); // acá le indico que espere 4000 milisegundos (4 segundos)
     </script>
     
     <!-- Bootstrap JS desde CDN -->
