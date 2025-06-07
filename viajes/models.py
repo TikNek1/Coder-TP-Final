@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django_ckeditor_5.fields import CKEditor5Field # para manejar contenido enriquecido con la v5
 
 class Guia(models.Model):
     nombre = models.CharField(max_length=100)
@@ -53,7 +52,7 @@ class Viaje(models.Model):
     ]
 
     nombre = models.CharField(max_length=100)
-    detalle = models.TextField(max_length=100)
+    detalle = models.TextField()
     fecha_salida = models.DateField()
     cant_dias = models.PositiveIntegerField()
     km = models.PositiveIntegerField()

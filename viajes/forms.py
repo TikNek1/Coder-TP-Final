@@ -1,7 +1,6 @@
 import os
 from django import forms
 from .models import Viaje, Piloto, Guia
-from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings

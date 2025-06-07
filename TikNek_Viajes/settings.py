@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "django_ckeditor_5", # para manejar contenido enriquecido, no pude usar el 4, tiene VULNs
     'viajes',            # aplicación principal del proyecto
     'widget_tweaks',     # para mejorar los formularios
     'messages_app',      # aplicación de mensajes
@@ -134,17 +133,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Configuración básica para poder usar el CKEditor v5 (la v4 tiene VULNs)
-CKEDITOR_5_UPLOAD_PATH = "uploads/"
-CKEDITOR_5_IMAGE_BACKEND = "pillow"
-
-CKEDITOR_5_CONFIGS = {
-    "default": {
-        "toolbar": ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "blockQuote"],
-        "language": "es",
-    }
-}
 
 # Esto para servir archivos
 MEDIA_URL = '/media/'
