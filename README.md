@@ -17,6 +17,10 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 
 ---
 
+## Video explicativo
+[Ver en YouTube](https://youtu.be/YgW0i65BJqg) – Este video muestra el funcionamiento general del proyecto, cómo usarlo, diferentes roles, etc
+
+
 ## Funcionalidades principales
 
 ### 1. Viajes
