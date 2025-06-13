@@ -1,35 +1,59 @@
-# Proyecto: TikNek_Viajes – Alcance funcional del MVP
+# Proyecto: TikNek Viajes
+
+**Trabajo Final para el curso Python Flex en CoderHouse**
+- Comisión: **69550**
+- Alumno: **Nicolás Tecco**
+
+## Tabla de Contenidos
+- [Objetivo general](#objetivo-general)
+- [Video explicativo](#video-explicativo)
+- [Casos de test](#casos-de-test)
+- [Roles](#roles)
+- [Usuario/pw para pruebas](#usuariopw-para-pruebas)
+- [Funcionalidades principales](#funcionalidades-principales)
+- [Consideraciones técnicas](#consideraciones-técnicas)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Estructura de la Aplicación](#estructura-de-la-aplicación)
+- [Instalación y ejecución de TikNek_Viajes](#instalación-y-ejecución-de-tiknek_viajes)
 
 ## Objetivo general
-El objetivo de este proyecto es desarrollar un MVP funcional para una empresa ficticia de viajes, donde los usuarios puedan consultar viajes, conocer los guías asignados y gestionar sus propios perfiles. Administradores podrán gestionar los viajes y los usuarios desde el panel Admin de Django.
-
-## Roles
-
-- **Usuario visitante**: No autenticado. Puede ver viajes, guías y página About, puede registrarse.
-- **Usuario registrado**: Puede ver viajes, guías, pilotos y editar su usuario/perfil, marcar interés en viajes.
-- **Usuario Editor / grupo TikNek**: Gestiona viajes, guías y pilotos. Responde consultas vía chat
-- **Administrador**: Gestiona viajes, guías y pilotos. Desde el panel de administración de Django, gestiona usuarios/grupos.
-
-## Usuario/pw para pruebas
-
-- **admin / coder123**: usuario con perfil administrador
-- **info.viajes / coder123**: usuario con perfil editor. Importante tener este usuario, ya que es quien recibe los chats de los interesados a los viajes. Debe existir!
+El objetivo de este proyecto es desarrollar un MVP funcional para una empresa ficticia de viajes, donde los usuarios puedan consultar viajes, conocer los guías asignados, gestionar sus propios perfiles y contactarse con otros pilotos. Administradores y Editores podrán gestionar los viajes, guías y pilotos.
 
 ---
 
 ## Video explicativo
 [Ver en YouTube](https://youtu.be/YgW0i65BJqg) – Este video muestra el funcionamiento general del proyecto, cómo usarlo, diferentes roles, etc
 
+## Casos de test
+A modo de ejemplo, se presentan algunos casos de prueba relevantes. Se puede ver y bajar desde el mismo repo del proyecto: https://github.com/TikNek1/Coder-TP-Final-Tecco/blob/main/Casos%20de%20Test.xlsx. El documento fue realizado con MS Excel 365
+
+---
+
+## Roles
+
+| Rol                | Permisos principales                                                                 |
+|--------------------|--------------------------------------------------------------------------------------|
+| Visitante  | Ver viajes, guías, página About, registrarse                                        |
+| Usuario Registrado | Ver viajes, guías, pilotos, editar perfil, hacer consultas sobre viajes, contactar pilotos                        |
+| Editor     | Gestionar viajes, guías, pilotos, responder consultas                               |
+| Administrador      | Gestionar viajes, guías, pilotos. Usuarios y grupos desde el panel de administración |
+
+## Usuario/pw para pruebas
+- **admin / coder123**: usuario con perfil administrador
+- **info.viajes / coder123**: usuario con perfil editor. Importante tener este usuario, ya que es quien recibe los chats de los interesados a los viajes. Debe existir!
+- **Obs.** Hay varios usuarios creados con un script usando faker en la BD de test, todos tienen la contraseña **test1234**
+
+---
 
 ## Funcionalidades principales
 
 ### 1. Viajes
-- Ver listado de viajes planificados (filtros opcionales: destino, fecha, etc.)
+- Ver listado de viajes planificados (filtros: destino/nombre, fecha)
 - Ver detalle del viaje con:
   - Fecha, destino, descripción
   - Guía asignado
   - Pilotos inscriptos
-- (Opcional para admins) **Soft delete** de viajes en lugar de borrado real, quedan archivados o en borrador.
+- (Admin / Editor) ABM de Viajes, con **Soft delete** de viajes en lugar de borrado real, quedan archivados o en borrador.
 
 ### 2. Interés / Consultas sobre un viaje
 - Botón en cada viaje que abre un chat prellenado con el usuario info_viajes:  
@@ -51,11 +75,9 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 - Chat con un piloto
 - (Admin / Editor) Edición/Eliminación de perfil de piloto
 
-
 ### 5. Guías
 - Listado / detalle de cada guía con su “CV” o experiencia
-- (Admin / Editor) Edición/Eliminación de perfil de piloto
-
+- (Admin / Editor) ABM de los guías
 
 ### 6. Página About
 - Página estática con info general sobre la empresa
@@ -63,18 +85,20 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 ### 7. Messages APP / Chat
 - Permite el chat 1:1 entre los usuarios autenticados en la plataforma
 - Cada usuario puede seleccionar a quién enviarle un mensaje, como así también ver respuestas e histórico
-- La app se usa también para que el usuario info.viajes responda preguntas de interesados a un viaje
+- La app se usa también para que el usuario info.viajes responda preguntas de interesados a un viaje en particular
+
 
 ---
 
 ## Consideraciones técnicas
 
 - Base de datos: SQLite
-- Panel de administración: se usará el admin de Django para gestión de usuarios, grupos, viajes y asignaciones.
+- Panel de administración: se usará el admin de Django para gestión de usuarios, grupos.
 - Frameworks: Django + Bootstrap
-- CRUD básico en frontend solo donde tenga sentido para el demo (por ejemplo, piloto, guia, viajes)
-- Imágenes de avatar: guardar localmente en `/static/`
-- Mensajes de confirmación (exito/error) en las acciones principales con `messages` de Django
+- CRUD en frontend para Piloto, Guia y Viajes
+- Imágenes de avatar: guardar en `/static/`
+- Imágenes de Guías: se guardan en `/media/` (no sincroniza con GitHub)
+- Mensajes de confirmación (éxito/error) en las acciones principales utilizando el módulo `messages` de Django
 
 
 ## Tecnologías utilizadas
@@ -88,4 +112,45 @@ El objetivo de este proyecto es desarrollar un MVP funcional para una empresa fi
 - Pillow (para poder usar ImageField)
 - Faker (para popular la BD con datos ficticios)
 
+## Estructura de la Aplicación
+
+- **Messages_app**: vistas y templates de la app de chat
+- **TikNek_Viajes**: template base, login/logout, home/bienvenida/landing, about
+- **Viajes**: vistas y templates de la app que contiene a los Viajes, Guías, Pilotos y la gestión de Usuarios
+- **Static**: avatars de los pilotos e imágenes que se usan en la app
+- **Media**: imágenes que se suben para los guías (no sincronizada con GH)
+
+## Instalación y ejecución de TikNek_Viajes
+
+### 1. Clonar el repositorio y crear/activar un entorno virtual 
+```bash
+git clone https://github.com/TikNek1/Coder-TP-Final-Tecco.git
+cd TP_Final
+
+# Mac/Linux
+python3 -m venv _myenv
+source _myenv/bin/activate
+
+# Windows
+python -m venv _myenv
+_myenv\Scripts\activate
+```
+###  2. Instalar dependencias
+```bash
+pip install -r requirements.txt
+```
+### 3. Lanzar servidor con BD de test y acceder a la app
+```bash
+python manage.py runserver
+http://127.0.0.1:8000/
+```
+### Opcional - Realizar una limpieza de la BD y cargar algunos datos aleatorios para pruebas.
+**ATENCION** no se eliminan los usuarios de la tabla user, solo los modelos específicos. 
+Para eliminar usuarios, hacerlos desde consola /admin, cuidado de no borrar el usuario "admin" ni los usuarios del grupo TikNek.
+Para encontrarlos fácil, ordenar por el campo "Staff status" en la tabla de usuarios del admin de Django.
+
+Para ejecutar este script, usar el comando:
+```bash
+python manage.py shell < cargar_datos_fake.py
+```
 ---

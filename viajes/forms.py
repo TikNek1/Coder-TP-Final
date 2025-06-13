@@ -7,6 +7,24 @@ from django.conf import settings
 
 
 class RegistroForm(UserCreationForm):
+    """
+    Formulario para registrar nuevos usuarios.
+    Extiende el formulario UserCreationForm de Django para incluir campos adicionales como
+    nombre, apellido y correo electrónico.
+
+    Campos:
+    - username: Nombre de usuario.
+    - first_name: Nombre del usuario.
+    - last_name: Apellido del usuario.
+    - email: Correo electrónico del usuario.
+    - password1: Contraseña.
+    - password2: Confirmación de la contraseña.
+
+    Métodos:
+    - clean_first_name: Capitaliza el nombre ingresado.
+    - clean_last_name: Capitaliza el apellido ingresado.
+    - clean_username: Convierte el nombre de usuario a minúsculas.
+    """
     first_name = forms.CharField(label='Nombre', max_length=30)
     last_name = forms.CharField(label='Apellido', max_length=30)
     email = forms.EmailField(label='Email')
@@ -29,6 +47,18 @@ class RegistroForm(UserCreationForm):
 
 
 class EditarUsuarioForm(forms.ModelForm):
+    """
+    Formulario para editar los datos de un usuario existente.
+
+    Campos:
+    - first_name: Nombre del usuario.
+    - last_name: Apellido del usuario.
+    - email: Correo electrónico del usuario.
+
+    Métodos:
+    - clean_first_name: Capitaliza el nombre ingresado.
+    - clean_last_name: Capitaliza el apellido ingresado.
+    """
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
@@ -44,8 +74,26 @@ class EditarUsuarioForm(forms.ModelForm):
     def clean_last_name(self):
         return self.cleaned_data['last_name'].capitalize()
 
+
 class GuiaForm(forms.ModelForm):
-    fecha_nac = forms.DateField(label='Fecha de nacimiento', required=False, widget=forms.DateInput(attrs={'type': 'date'},format='%Y-%m-%d'))
+    """
+    Formulario para gestionar los datos de un guía.
+
+    Campos:
+    - nombre, apellido, email, dni, telefono, fecha_nac, ciudad, pais, sobre_mi, foto.
+
+    Widgets personalizados:
+    - fecha_nac: Selector de fecha.
+    - sobre_mi: Área de texto con 4 filas.
+
+    Métodos:
+    - __init__: Agrega la clase CSS 'form-control' a todos los campos.
+    """
+    fecha_nac = forms.DateField(
+        label='Fecha de nacimiento',
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d')
+    )
 
     class Meta:
         model = Guia
@@ -59,8 +107,27 @@ class GuiaForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
+
 class PilotoForm(forms.ModelForm):
-    fecha_nac = forms.DateField(label='Fecha de nacimiento', required=False, widget=forms.DateInput(attrs={'type': 'date'},format='%Y-%m-%d'))
+    """
+    Formulario para gestionar los datos de un piloto.
+
+    Campos:
+    - telefono, fecha_nac, ciudad, pais, sobre_mi, moto, avatar.
+
+    Widgets personalizados:
+    - fecha_nac: Selector de fecha.
+    - sobre_mi: Área de texto con 4 filas.
+    - avatar: Selector de opciones con imágenes disponibles en la carpeta 'static/avatars'.
+
+    Métodos:
+    - __init__: Carga las opciones de avatar dinámicamente desde el sistema de archivos.
+    """
+    fecha_nac = forms.DateField(
+        label='Fecha de nacimiento',
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d')
+    )
     avatar = forms.ChoiceField(choices=[], widget=forms.RadioSelect)
 
     class Meta:
@@ -78,13 +145,24 @@ class PilotoForm(forms.ModelForm):
 
 
 class ViajeForm(forms.ModelForm):
+    """
+    Formulario para gestionar los datos de un viaje.
+
+    Campos:
+    - nombre, detalle, fecha_salida, cant_dias, km, dificultad, guia, pilotos, activo, max_pilotos.
+
+    Widgets personalizados:
+    - fecha_salida: Selector de fecha.
+    - detalle: Área de texto con 4 filas.
+
+    Métodos:
+    - __init__: Personaliza los widgets de los campos y ajusta etiquetas y valores predeterminados.
+    """
     class Meta:
         model = Viaje
         fields = ['nombre', 'detalle', 'fecha_salida', 'cant_dias', 'km', 'dificultad', 'guia', 'pilotos', 'activo', 'max_pilotos']
         widgets = {
-            'fecha_salida': forms.DateInput(
-                attrs={'type': 'date'},
-                format='%Y-%m-%d'),
+            'fecha_salida': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'detalle': forms.Textarea(attrs={'rows': 4}),
         }
 
@@ -96,7 +174,6 @@ class ViajeForm(forms.ModelForm):
         self.fields['pilotos'].widget.attrs['id'] = 'id_pilotos'
         self.fields['km'].label = 'Kilómetros'
         self.fields['max_pilotos'].label = 'Máxima cantidad de pilotos'
-        
 
         # Campo guía: mostrar label según haya guías o no
         guia_field = self.fields.get('guia', None)

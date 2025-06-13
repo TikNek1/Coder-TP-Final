@@ -12,35 +12,52 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 
+# -------------------------------------------------------------------------------------------------------------------
+# *** LANDING PAGE ***
+# -------------------------------------------------------------------------------------------------------------------
 
-# Landing page
 def bienvenida(request):
+    """
+    Vista para la página de bienvenida.
+    Renderiza la plantilla 'bienvenida.html'.
+    """
     return render(request, 'bienvenida.html')
 
 # -------------------------------------------------------------------------------------------------------------------
 # *** USUARIOS ***
-# En esta sección están las vistas para el registro de usuarios, el perfil de piloto, la edición de usuario 
-# y el cambio de contraseña.
 # -------------------------------------------------------------------------------------------------------------------
 
 class RegistroView(CreateView):
+    """
+    Vista para registrar nuevos usuarios.
+    Utiliza el formulario RegistroForm para crear un nuevo usuario.
+    """
     model = User
     form_class = RegistroForm
     template_name = 'usuarios/registro.html'
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
+        """
+        Si el formulario es válido, registra al usuario y lo autentica automáticamente.
+        """
         user = form.save()
         login(self.request, user)
         messages.success(self.request, f"Usuario {user.username}  registrado correctamente. Por favor, hacé login y completá tu perfil.")
         return super().form_valid(form)
 
-# Creación de perfil de piloto si no existe, update si ya existe.
-# Esta es la vista que se usa cuando el usuario elige: "Mi Perfil"
+
 class PerfilPilotoView(LoginRequiredMixin, View):
+    """
+    Vista para crear o actualizar el perfil de un piloto.
+    Renderiza un formulario para completar o editar el perfil del piloto.
+    """
     template_name = 'usuarios/completar_perfil.html'
 
     def get(self, request):
+        """
+        Muestra el formulario con los datos del piloto si existe, o vacío si no.
+        """
         try:
             piloto = request.user.piloto
             form = PilotoForm(instance=piloto)
@@ -50,6 +67,9 @@ class PerfilPilotoView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
+        """
+        Procesa el formulario para crear o actualizar el perfil del piloto.
+        """
         try:
             piloto = request.user.piloto
             form = PilotoForm(request.POST, request.FILES, instance=piloto)
@@ -60,51 +80,66 @@ class PerfilPilotoView(LoginRequiredMixin, View):
             piloto = form.save(commit=False)
             piloto.user = request.user
             piloto.save()
-
-            # Mensaje de confirmación
             messages.success(request, "Perfil actualizado.")
-            
             return redirect('bienvenida')
 
         return render(request, self.template_name, {'form': form})
 
+
 class EditarUsuarioView(LoginRequiredMixin, UpdateView):
+    """
+    Vista para editar los datos de un usuario existente.
+    """
     model = User
     form_class = EditarUsuarioForm
     template_name = 'usuarios/editar_usuario.html'
-    success_url = reverse_lazy('bienvenida') 
+    success_url = reverse_lazy('bienvenida')
 
     def get_object(self):
+        """
+        Retorna el usuario autenticado.
+        """
         return self.request.user
 
     def form_valid(self, form):
+        """
+        Muestra un mensaje de éxito si los datos del usuario se actualizan correctamente.
+        """
         messages.success(self.request, "Tus datos de usuario fueron actualizados.")
         return super().form_valid(form)
 
+
 class CambiarPasswordView(PasswordChangeView):
+    """
+    Vista para cambiar la contraseña del usuario autenticado.
+    """
     template_name = 'usuarios/cambiar_password.html'
     success_url = reverse_lazy('bienvenida')
 
     def form_valid(self, form):
+        """
+        Muestra un mensaje de éxito si la contraseña se actualiza correctamente.
+        """
         messages.success(self.request, "Tu contraseña fue actualizada correctamente.")
         return super().form_valid(form)
 
 # -------------------------------------------------------------------------------------------------------------------
-# *** VIAJES *** 
-# En esta sección están las vistas para listar viajes, ver detalles de un viaje, editar y eliminar viajes,
+# *** VIAJES ***
 # -------------------------------------------------------------------------------------------------------------------
 
 def listar_viajes(request):
+    """
+    Vista para listar los viajes disponibles.
+    Permite filtrar por nombre y mes de salida.
+    """
     nombre = request.GET.get('nombre', '')
     mes = request.GET.get('mes', '')  # formato esperado: YYYY-MM
 
-    # Primer filtro según permisos
+# Primer filtro según permisos
     if request.user.is_authenticated and (request.user.is_superuser or request.user.groups.filter(name='TikNek').exists()):
         viajes = Viaje.objects.all()
     else:
         viajes = Viaje.objects.filter(activo=True)
-
-    #viajes = Viaje.objects.all()
 
     if nombre:
         viajes = viajes.filter(nombre__icontains=nombre)
@@ -121,40 +156,55 @@ def listar_viajes(request):
         'viajes': viajes.order_by('fecha_salida'),
     })
 
-# Vista para ver los detalles de un viaje
-# def detalle_viaje(request, viaje_id):
-#     viaje = get_object_or_404(Viaje, id=viaje_id)
-#     return render(request, 'viajes/detalle_viaje.html', {'viaje': viaje})
 
 class ViajeDetailView(DetailView):
+    """
+    Vista para mostrar los detalles de un viaje.
+    """
     model = Viaje
     template_name = 'viajes/detalle_viaje.html'
     context_object_name = 'viaje'
 
     def get_context_data(self, **kwargs):
+        """
+        Agrega al contexto si el usuario puede editar el viaje.
+        """
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context['puede_editar'] = user.is_superuser or user.groups.filter(name='TikNek').exists() # type: ignore
+        context['puede_editar'] = user.is_superuser or user.groups.filter(name='TikNek').exists()  # type: ignore
         return context
 
+
 class ViajeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    Vista para editar un viaje existente.
+    """
     model = Viaje
     form_class = ViajeForm
     template_name = 'viajes/editar_viaje.html'
     success_url = reverse_lazy('listar_viajes')
 
     def get_success_url(self):
+        """
+        Redirige a los detalles del viaje después de actualizarlo.
+        """
         messages.success(self.request, "Viaje actualizado correctamente.")
         return reverse_lazy('detalle_viaje', kwargs={'pk': self.object.pk}) # type: ignore
 
     def test_func(self):
-        return self.request.user.is_superuser or self.request.user.groups.filter(name='TikNek').exists() # type: ignore
+                return self.request.user.is_superuser or self.request.user.groups.filter(name='TikNek').exists() # type: ignore
 
 class ViajeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """
+    Vista para eliminar un viaje.
+    """
     model = Viaje
     template_name = 'viajes/eliminar_viaje.html'
-    
+
     def get_success_url(self):
+        """
+        Redirige a la lista de viajes después de eliminarlo.
+        """
         messages.success(self.request, "Viaje eliminado")
         return reverse_lazy('listar_viajes')
 
@@ -230,16 +280,21 @@ class GuiaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 # -------------------------------------------------------------------------------------------------------------------
 # *** PILOTOS ***
-# En esta sección están las vistas para listar PILOTOS y ver los detalles de un piloto, además del CRUD.
 # -------------------------------------------------------------------------------------------------------------------
 
-
 class ListaPilotosView(LoginRequiredMixin, ListView):
+    """
+    Vista para listar pilotos.
+    Permite filtrar por nombre, apellido, ciudad y país.
+    """
     model = Piloto
     template_name = 'pilotos/lista_pilotos.html'
     context_object_name = 'pilotos'
 
     def get_queryset(self):
+        """
+        Filtra la lista de pilotos según los parámetros de búsqueda.
+        """
         queryset = Piloto.objects.select_related('user').all()
         query = self.request.GET.get('q', '')
         pais = self.request.GET.get('pais', '')
@@ -256,8 +311,10 @@ class ListaPilotosView(LoginRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        """
+        Agrega al contexto una lista de países para el filtro desplegable.
+        """
         context = super().get_context_data(**kwargs)
-        # esto es para poder filtrar por país en la lista de pilotos con una lista desplegable
         context['paises'] = Piloto.objects.exclude(pais='').exclude(pais__isnull=True).values_list('pais', flat=True).distinct().order_by('pais')
         return context
 

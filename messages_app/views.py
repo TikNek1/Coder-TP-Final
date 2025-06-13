@@ -7,6 +7,17 @@ from django.db.models import Q
 
 @login_required
 def inbox(request):
+    """
+    Vista para mostrar la bandeja de entrada del usuario autenticado.
+    - Obtiene todos los usuarios excepto el usuario actual.
+    - Identifica los usuarios con los que el usuario actual ha intercambiado mensajes.
+    - Renderiza la plantilla 'inbox.html' con la lista de usuarios y chats activos.
+
+    Contexto enviado al template:
+    - users: Lista de todos los usuarios excepto el usuario actual.
+    - active_chats: Lista de usuarios con los que el usuario actual ha intercambiado mensajes.
+    """
+
     users = User.objects.exclude(id=request.user.id)
 
     # Usuarios con los que intercambió mensajes
@@ -23,6 +34,14 @@ def inbox(request):
 
 @login_required
 def chat_with_user_redirect(request):
+    """
+    Redirige al usuario a la conversación con otro usuario específico.
+    - Si se proporciona un parámetro 'username' en la URL, redirige a la vista de conversación con ese usuario.
+    - Si no se proporciona, redirige a la bandeja de entrada.
+
+    Parámetros:
+    - username (GET): Nombre de usuario del destinatario con el que se desea iniciar una conversación.
+    """
     username = request.GET.get('username')
     if username:
         return redirect('conversation', username=username)
@@ -30,6 +49,19 @@ def chat_with_user_redirect(request):
 
 @login_required
 def conversation(request, username):
+    """
+    Vista para manejar la conversación entre el usuario autenticado y otro usuario.
+    - Obtiene los mensajes entre el usuario actual y el usuario especificado.
+    - Permite enviar nuevos mensajes mediante un formulario.
+
+    Parámetros:
+    - username: Nombre de usuario del destinatario con el que se está conversando.
+
+    Contexto enviado al template:
+    - chat_messages: Lista de mensajes entre el usuario actual y el destinatario.
+    - form: Formulario para enviar un nuevo mensaje.
+    - other_user: Usuario con el que se está conversando.
+    """
     other_user = get_object_or_404(User, username=username)
     messages = Message.objects.filter(
         sender__in=[request.user, other_user],
